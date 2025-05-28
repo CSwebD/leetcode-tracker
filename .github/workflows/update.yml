@@ -2,8 +2,8 @@ name: Update LeetCode Stats
 
 on:
   schedule:
-    - cron: "0 12 * * *"  # Runs daily at 12:00 UTC
-  workflow_dispatch:  # Allows to run it manually too
+    - cron: "0 12 * * *"
+  workflow_dispatch:
 
 jobs:
   update-readme:
@@ -21,7 +21,7 @@ jobs:
       - name: Install Dependencies
         run: pip install requests
 
-      - name: Run the LeetCode script
+      - name: Run LeetCode Script
         run: python leetcode_stats.py
 
       - name: Commit and Push changes
@@ -34,4 +34,3 @@ jobs:
           git add README.md
           git commit -m "🔄 Update LeetCode stats"
           git push
-
