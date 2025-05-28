@@ -1,7 +1,7 @@
 import requests
 import json
 
-USERNAME = "cris_tian_7"
+USERNAME = "cris_tian_7"  # ✅ Correct LeetCode username
 
 query = """
 query getUserProfile($username: String!) {
@@ -27,6 +27,10 @@ response = requests.post(
 )
 
 data = response.json()
+
+if not data["data"]["matchedUser"]:
+    raise ValueError(f"User '{USERNAME}' not found on LeetCode.")
+
 stats = data["data"]["matchedUser"]["submitStats"]["acSubmissionNum"]
 
 with open("README.md", "w") as f:
@@ -35,4 +39,4 @@ with open("README.md", "w") as f:
     for item in stats:
         f.write(f"- {item['difficulty'].capitalize()}: {item['count']} problems solved\n")
         total += item['count']
-    f.write(f"\n✅ Total Solved: {total}\n")
+    f.write(f"\n✅ Total Solved: {total} problems\n")
