@@ -1,5 +1,8 @@
-# LeetCode Progress Tracker
+# LeetCode Progress Tracker for cris_tian_7
 
-This file is automatically updated.
+- All: 4 problems solved
+- Easy: 4 problems solved
+- Medium: 0 problems solved
+- Hard: 0 problems solved
 
-<!-- Trigger GitHub Actions -->
+✅ Total Solved: 8 problems
