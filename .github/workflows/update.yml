@@ -31,11 +31,15 @@ jobs:
           git config --global user.name 'CSwebD'
           git config --global user.email 'sclifos.cristian@gmail.com'
 
+          echo "✅ Setting up authenticated remote"
           git remote remove origin
           git remote add origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}
+          git remote -v  # 🔍 Debug output
 
           git add README.md
           git commit -m "🔄 Update LeetCode stats" || echo "Nothing to commit"
+          echo "🚀 Pushing to GitHub using token"
           git push origin main
+
 
 
