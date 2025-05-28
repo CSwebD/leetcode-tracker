@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # ✅ Needed to allow pushing changes
+  contents: write
 
 jobs:
   update-readme:
@@ -27,24 +27,11 @@ jobs:
       - name: Run LeetCode Script
         run: python leetcode_stats.py
 
-      - name: Echo GitHub token (safe test)
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          if [[ -z "${GH_TOKEN}" ]]; then
-            echo "❌ GH_TOKEN is EMPTY"
-            exit 1
-          else
-            echo "✅ GH_TOKEN is loaded"
-          fi
-
       - name: Commit and Push changes
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config --global user.name 'CSwebD'
           git config --global user.email 'sclifos.cristian@gmail.com'
-          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git remote -v
           git add README.md
           git commit -m "🔄 Update LeetCode stats" || echo "Nothing to commit"
