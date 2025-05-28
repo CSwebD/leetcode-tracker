@@ -1,7 +1,7 @@
 import requests
 import json
 
-USERNAME = "cris_tian_7"  # ✅ Correct LeetCode username
+USERNAME = "cris_tian_7"  # Your actual LeetCode username
 
 query = """
 query getUserProfile($username: String!) {
