@@ -1,3 +1,22 @@
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: pip install requests
+
+      - name: Run LeetCode Script
+        run: python leetcode_stats.py
+
       - name: Echo GitHub token (safe test)
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -8,3 +27,15 @@
           else
             echo "✅ GH_TOKEN is loaded"
           fi
+
+      - name: Commit and Push changes
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config --global user.name 'CSwebD'
+          git config --global user.email 'sclifos.cristian@gmail.com'
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}
+          git remote -v
+          git add README.md
+          git commit -m "🔄 Update LeetCode stats" || echo "Nothing to commit"
+          git push origin main
