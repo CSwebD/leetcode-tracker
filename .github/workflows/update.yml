@@ -2,8 +2,8 @@ name: Update LeetCode Stats
 
 on:
   schedule:
-    - cron: "0 12 * * *"  # ⏰ Runs daily at 12:00 UTC
-  workflow_dispatch:  # 🚀 Allows you to run it manually too
+    - cron: "0 12 * * *"  # Runs daily at 12:00 UTC
+  workflow_dispatch:  # Allows to run it manually too
 
 jobs:
   update-readme:
