@@ -30,12 +30,12 @@ jobs:
         run: |
           git config --global user.name 'CSwebD'
           git config --global user.email 'sclifos.cristian@gmail.com'
-          
-          # ✅ Ensure remote is reset fully
+
           git remote remove origin
           git remote add origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}
-          
+
           git add README.md
           git commit -m "🔄 Update LeetCode stats" || echo "Nothing to commit"
           git push origin main
+
 
