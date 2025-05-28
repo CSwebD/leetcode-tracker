@@ -24,7 +24,7 @@ jobs:
       - name: Run LeetCode Script
         run: python leetcode_stats.py
 
-            - name: Commit and Push changes
+      - name: Commit and Push changes
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
