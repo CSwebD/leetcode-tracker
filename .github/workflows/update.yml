@@ -1,47 +1,10 @@
-name: Update LeetCode Stats
-
-on:
-  schedule:
-    - cron: "0 12 * * *"
-  workflow_dispatch:
-
-jobs:
-  update-readme:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install Dependencies
-        run: pip install requests
-
-      - name: Run LeetCode Script
-        run: python leetcode_stats.py
-
-      - name: Commit and Push changes
+      - name: Echo GitHub token (safe test)
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git config --global user.name 'CSwebD'
-          git config --global user.email 'sclifos.cristian@gmail.com'
-
-          echo "✅ Forcing remote to use token"
-          git remote set-url origin https://x-access-token:***@github.com/CSwebD/leetcode-tracker (push)
-
-          git remote -v
-
-          git add README.md
-          git commit -m "🔄 Update LeetCode stats" || echo "Nothing to commit"
-          echo "🚀 Pushing to GitHub using token"
-          git push origin main
-
-          git push origin main
-
-
-
+          if [[ -z "${GH_TOKEN}" ]]; then
+            echo "❌ GH_TOKEN is EMPTY"
+            exit 1
+          else
+            echo "✅ GH_TOKEN is loaded"
+          fi
