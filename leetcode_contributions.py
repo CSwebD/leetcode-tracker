@@ -21,12 +21,14 @@ def fetch_submission_calendar():
     variables = {"username": USERNAME}
     response = requests.post("https://leetcode.com/graphql", json={"query": query, "variables": variables})
     data = response.json()
-         if "data" not in data or data["data"]["userCalendar"] is None:
-         print("❌ LeetCode API error or user not found.")
-         print("Raw response:", json.dumps(data, indent=2))
-         exit(1)
+
+    if "data" not in data or data["data"]["userCalendar"] is None:
+       print("❌ LeetCode API error or user not found.")
+       print("Raw response:", json.dumps(data, indent=2))
+       exit(1)
 
     calendar_str = data["data"]["userCalendar"]["submissionCalendar"]
+
 
     return json.loads(calendar_str)
 
