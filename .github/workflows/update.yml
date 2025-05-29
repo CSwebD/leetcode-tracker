@@ -23,7 +23,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install requests pandas matplotlib
+          pip install requests pandas matplotlib seaborn
 
       - name: Run LeetCode Stats Script
         run: python leetcode_stats.py
