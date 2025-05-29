@@ -24,8 +24,22 @@ def fetch_submission_calendar():
         json={"query": query, "variables": {"username": USERNAME}},
         headers={"Content-Type": "application/json"}
     )
-    calendar_str = response.json()["data"]["userCalendar"]["submissionCalendar"]
-    return json.loads(calendar_str)
+
+    try:
+        response.raise_for_status()
+        data = response.json()
+        if "data" in data and data["data"]["userCalendar"]:
+            calendar_str = data["data"]["userCalendar"]["submissionCalendar"]
+            return json.loads(calendar_str)
+        else:
+            print("❌ Unexpected response format:")
+            print(json.dumps(data, indent=2))
+            raise Exception("Missing expected keys in response.")
+    except Exception as e:
+        print("🚨 Failed to fetch submission calendar.")
+        print(f"Error: {str(e)}")
+        raise
+
 
 def generate_contribution_heatmap(submissions):
     df = pd.DataFrame([
