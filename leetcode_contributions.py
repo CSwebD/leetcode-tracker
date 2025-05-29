@@ -1,4 +1,3 @@
-
 import requests
 import json
 import datetime
@@ -22,14 +21,12 @@ def fetch_submission_calendar():
     response = requests.post("https://leetcode.com/graphql", json={"query": query, "variables": variables})
     data = response.json()
 
-    if "data" not in data or data["data"]["userCalendar"] is None:
-       print("❌ LeetCode API error or user not found.")
-       print("Raw response:", json.dumps(data, indent=2))
-       exit(1)
+    if "data" not in data or data["data"] is None or data["data"].get("userCalendar") is None:
+        print("❌ LeetCode API error or user not found.")
+        print("Raw response:", json.dumps(data, indent=2))
+        exit(1)
 
     calendar_str = data["data"]["userCalendar"]["submissionCalendar"]
-
-
     return json.loads(calendar_str)
 
 def generate_heatmap(submissions):
@@ -39,12 +36,16 @@ def generate_heatmap(submissions):
     ])
     df["date"] = pd.to_datetime(df["date"])
     df.set_index("date", inplace=True)
+
+    # Fill missing dates with 0 submissions
+    df = df.resample("D").sum().fillna(0)
     weekly = df["count"].resample("W").sum()
 
     plt.figure(figsize=(10, 1.5))
     sns.heatmap(weekly.values.reshape(1, -1), cmap="Greens", cbar=False)
     plt.axis("off")
     plt.tight_layout()
+
     os.makedirs(ASSET_PATH, exist_ok=True)
     plt.savefig(f"{ASSET_PATH}/leetcode-contributions.svg", format="svg", bbox_inches="tight")
     plt.close()
