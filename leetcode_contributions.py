@@ -8,16 +8,24 @@ import os
 
 USERNAME = "cris_tian_7"
 ASSET_PATH = "assets"
+YEAR = datetime.datetime.now().year
 
 def fetch_submission_calendar():
     query = """
-    query userSubmissionCalendar($username: String!) {
-      userProgressCalendarV2(userSlug: $username) {
-        submissionCalendar
+    query userSubmissionCalendar($userSlug: String!, $year: Int!, $queryType: ProgressCalendarQueryTypeEnum!) {
+      userProgressCalendarV2(userSlug: $userSlug, year: $year, queryType: $queryType) {
+        submissions {
+          date
+          count
+        }
       }
     }
     """
-    variables = {"username": USERNAME}
+    variables = {
+        "userSlug": USERNAME,
+        "year": YEAR,
+        "queryType": "SUBMISSION"
+    }
     response = requests.post("https://leetcode.com/graphql", json={"query": query, "variables": variables})
     data = response.json()
 
@@ -26,28 +34,24 @@ def fetch_submission_calendar():
         print("Raw response:", json.dumps(data, indent=2))
         exit(1)
 
-    calendar_str = data["data"]["userProgressCalendarV2"]["submissionCalendar"]
-    return json.loads(calendar_str)
+    submissions = data["data"]["userProgressCalendarV2"]["submissions"]
+    return submissions
 
 def generate_heatmap(submissions):
     df = pd.DataFrame([
-        {"date": datetime.datetime.utcfromtimestamp(int(ts)).strftime('%Y-%m-%d'), "count": cnt}
-        for ts, cnt in submissions.items()
+        {"date": sub["date"], "count": sub["count"]}
+        for sub in submissions
     ])
     df["date"] = pd.to_datetime(df["date"])
     df.set_index("date", inplace=True)
-
-    # Fill missing dates and group by week
     df = df.resample("D").sum().fillna(0)
     weekly = df["count"].resample("W").sum()
 
-    # Create heatmap
     plt.figure(figsize=(10, 1.5))
     sns.heatmap(weekly.values.reshape(1, -1), cmap="Greens", cbar=False)
     plt.axis("off")
     plt.tight_layout()
 
-    # Save output
     os.makedirs(ASSET_PATH, exist_ok=True)
     plt.savefig(f"{ASSET_PATH}/leetcode-contributions.svg", format="svg", bbox_inches="tight")
     plt.close()
