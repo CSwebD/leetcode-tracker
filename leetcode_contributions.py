@@ -12,33 +12,16 @@ USERNAME = "cris_tian_7"
 ASSET_PATH = "assets"
 
 def fetch_submission_calendar():
-    query = """
-    query userSubmissionCalendar($username: String!) {
-      userCalendar(userSlug: $username) {
-        submissionCalendar
-      }
-    }
-    """
-    response = requests.post(
-        "https://leetcode.com/graphql",
-        json={"query": query, "variables": {"username": USERNAME}},
-        headers={"Content-Type": "application/json"}
-    )
+    url = f"https://leetcode.com/users/{USERNAME}/calendar.json"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return json.loads(response.text)
+    else:
+        print(f"❌ Failed to fetch calendar from {url}")
+        print(f"Status code: {response.status_code}")
+        print(f"Response: {response.text}")
+        raise Exception("Could not fetch calendar data")
 
-    try:
-        response.raise_for_status()
-        data = response.json()
-        if "data" in data and data["data"]["userCalendar"]:
-            calendar_str = data["data"]["userCalendar"]["submissionCalendar"]
-            return json.loads(calendar_str)
-        else:
-            print("❌ Unexpected response format:")
-            print(json.dumps(data, indent=2))
-            raise Exception("Missing expected keys in response.")
-    except Exception as e:
-        print("🚨 Failed to fetch submission calendar.")
-        print(f"Error: {str(e)}")
-        raise
 
 
 def generate_contribution_heatmap(submissions):
