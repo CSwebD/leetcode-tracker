@@ -1,42 +1,22 @@
 import requests
-import json
 
-USERNAME = "cris_tian_7"  # Your actual LeetCode username
+USERNAME = "cris_tian_7"
+API_URL = f"https://leetcode-stats-api.herokuapp.com/{USERNAME}"
 
-query = """
-query getUserProfile($username: String!) {
-  matchedUser(username: $username) {
-    username
-    submitStats: submitStatsGlobal {
-      acSubmissionNum {
-        difficulty
-        count
-      }
-    }
-  }
-}
-"""
-
-variables = {"username": USERNAME}
-headers = {"Content-Type": "application/json"}
-
-response = requests.post(
-    "https://leetcode.com/graphql",
-    json={"query": query, "variables": variables},
-    headers=headers
-)
-
+response = requests.get(API_URL)
 data = response.json()
 
-if not data["data"]["matchedUser"]:
-    raise ValueError(f"User '{USERNAME}' not found on LeetCode.")
+if "status" in data and data["status"] == "error":
+    raise ValueError(f"❌ User '{USERNAME}' not found.")
 
-stats = data["data"]["matchedUser"]["submitStats"]["acSubmissionNum"]
+easy = data.get("easySolved", 0)
+medium = data.get("mediumSolved", 0)
+hard = data.get("hardSolved", 0)
+total = data.get("totalSolved", 0)
 
 with open("README.md", "w") as f:
     f.write(f"# LeetCode Progress Tracker for {USERNAME}\n\n")
-    total = 0
-    for item in stats:
-        f.write(f"- {item['difficulty'].capitalize()}: {item['count']} problems solved\n")
-        total += item['count']
+    f.write(f"- Easy: {easy} problems solved\n")
+    f.write(f"- Medium: {medium} problems solved\n")
+    f.write(f"- Hard: {hard} problems solved\n")
     f.write(f"\n✅ Total Solved: {total} problems\n")
